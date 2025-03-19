@@ -46,23 +46,23 @@ func (w *NonAnsiDetectionWriter) Write(p []byte) (n int, err error) {
 					bytes.HasPrefix(sequence, []byte("48;2")) ||
 					bytes.HasPrefix(sequence, []byte("38;5")) ||
 					bytes.HasPrefix(sequence, []byte("48;5"))) {
-					output = append(output, '\x1b', '[', '9', 'm') // start strikethrough
+					output = append(output, '\x1b', '[', '7', ';', '9', 'm') // reverse video and strikethrough
 					output = append(output, remainder[:nlIdx]...)
-					output = append(output, '\x1b', '[', '2', '9', 'm') // end strikethrough
+					output = append(output, '\x1b', '[', '2', '7', ';', '2', '9', 'm') // reset reverse video and strikethrough
 				} else {
 					output = append(output, remainder[:nlIdx]...)
 				}
 				// Write newline and rest of text
 				output = append(output, remainder[nlIdx:]...)
 			} else {
-				// No newline, write remainder with strikethrough if needed
+				// No newline, write remainder with effects if needed
 				if !isSimpleColorCode(sequence) && (bytes.HasPrefix(sequence, []byte("38;2")) ||
 					bytes.HasPrefix(sequence, []byte("48;2")) ||
 					bytes.HasPrefix(sequence, []byte("38;5")) ||
 					bytes.HasPrefix(sequence, []byte("48;5"))) {
-					output = append(output, '\x1b', '[', '9', 'm') // start strikethrough
+					output = append(output, '\x1b', '[', '7', ';', '9', 'm') // reverse video and strikethrough
 					output = append(output, remainder...)
-					output = append(output, '\x1b', '[', '2', '9', 'm') // end strikethrough
+					output = append(output, '\x1b', '[', '2', '7', ';', '2', '9', 'm') // reset reverse video and strikethrough
 				} else {
 					output = append(output, remainder...)
 				}
@@ -79,9 +79,9 @@ func (w *NonAnsiDetectionWriter) Write(p []byte) (n int, err error) {
 					bytes.HasPrefix(part, []byte("48;2")) ||
 					bytes.HasPrefix(part, []byte("38;5")) ||
 					bytes.HasPrefix(part, []byte("48;5")) {
-					output = append(output, '\x1b', '[', '9', 'm') // start strikethrough
+					output = append(output, '\x1b', '[', '7', ';', '9', 'm') // reverse video and strikethrough
 					output = append(output, part...)
-					output = append(output, '\x1b', '[', '2', '9', 'm') // end strikethrough
+					output = append(output, '\x1b', '[', '2', '7', ';', '2', '9', 'm') // reset reverse video and strikethrough
 				} else {
 					output = append(output, part...)
 				}

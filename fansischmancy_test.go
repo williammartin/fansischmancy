@@ -39,7 +39,7 @@ func TestNonAnsiDetectionWriter_Detect24BitColor(t *testing.T) {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	expected := "\x1b[38;2;255;100;0m\x1b[9mColored Text\x1b[29m\x1b[0m\n"
+	expected := "\x1b[38;2;255;100;0m\x1b[7;9mColored Text\x1b[27;29m\x1b[0m\n"
 	if got := buf.String(); got != expected {
 		t.Errorf("Expected:\n%q\nGot:\n%q", expected, got)
 	}
@@ -78,7 +78,7 @@ func TestNonAnsiDetectionWriter_Multiple24BitSequences(t *testing.T) {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	expected := "\x1b[38;2;255;100;0m\x1b[9mOrange\x1b[29m\x1b[0m \x1b[38;2;100;255;100m\x1b[9mGreen\x1b[29m\x1b[0m\n"
+	expected := "\x1b[38;2;255;100;0m\x1b[7;9mOrange\x1b[27;29m\x1b[0m \x1b[38;2;100;255;100m\x1b[7;9mGreen\x1b[27;29m\x1b[0m\n"
 	if got := buf.String(); got != expected {
 		t.Errorf("Expected:\n%q\nGot:\n%q", expected, got)
 	}
@@ -102,7 +102,7 @@ func TestNonAnsiDetectionWriter_MultipleWrites(t *testing.T) {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	expected := "\x1b[38;2;255;100;0m\x1b[9mOrange\x1b[29m\n\x1b[38;2;100;255;100m\x1b[9mGreen\x1b[29m\x1b[0m\n"
+	expected := "\x1b[38;2;255;100;0m\x1b[7;9mOrange\x1b[27;29m\n\x1b[38;2;100;255;100m\x1b[7;9mGreen\x1b[27;29m\x1b[0m\n"
 	if got := buf.String(); got != expected {
 		t.Errorf("Expected:\n%q\nGot:\n%q", expected, got)
 	}
@@ -149,7 +149,7 @@ func TestNonAnsiDetectionWriter_MixedSequences(t *testing.T) {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	expected := "\x1b[31mRed\x1b[0m \x1b[38;2;100;255;100m\x1b[9mGreen\x1b[29m\x1b[0m \x1b[34mBlue\x1b[0m\n"
+	expected := "\x1b[31mRed\x1b[0m \x1b[38;2;100;255;100m\x1b[7;9mGreen\x1b[27;29m\x1b[0m \x1b[34mBlue\x1b[0m\n"
 	if got := buf.String(); got != expected {
 		t.Errorf("Expected:\n%q\nGot:\n%q", expected, got)
 	}
@@ -166,7 +166,7 @@ func TestNonAnsiDetectionWriter_NonColorSequences(t *testing.T) {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	expected := "\x1b[2J\x1b[H\x1b[38;2;255;100;0m\x1b[9mColored\x1b[29m\x1b[0m\n"
+	expected := "\x1b[2J\x1b[H\x1b[38;2;255;100;0m\x1b[7;9mColored\x1b[27;29m\x1b[0m\n"
 	if got := buf.String(); got != expected {
 		t.Errorf("Expected:\n%q\nGot:\n%q", expected, got)
 	}
@@ -208,19 +208,19 @@ func TestNonAnsiDetectionWriter_WriterContract(t *testing.T) {
 			name:     "should return original length with ANSI sequence",
 			input:    []byte("\x1b[38;2;255;100;0mColored"),
 			wantN:    24,
-			wantText: "\x1b[38;2;255;100;0m\x1b[9mColored\x1b[29m",
+			wantText: "\x1b[38;2;255;100;0m\x1b[7;9mColored\x1b[27;29m",
 		},
 		{
 			name:     "should return original length with multiple sequences",
 			input:    []byte("\x1b[38;2;255;100;0mOne\x1b[0m \x1b[38;2;100;255;100mTwo"),
 			wantN:    47,
-			wantText: "\x1b[38;2;255;100;0m\x1b[9mOne\x1b[29m\x1b[0m \x1b[38;2;100;255;100m\x1b[9mTwo\x1b[29m",
+			wantText: "\x1b[38;2;255;100;0m\x1b[7;9mOne\x1b[27;29m\x1b[0m \x1b[38;2;100;255;100m\x1b[7;9mTwo\x1b[27;29m",
 		},
 		{
 			name:     "should handle incomplete sequence at end",
 			input:    []byte("\x1b[38;2;255;100;0mText\x1b["),
 			wantN:    23,
-			wantText: "\x1b[38;2;255;100;0m\x1b[9mText\x1b[29m\x1b[",
+			wantText: "\x1b[38;2;255;100;0m\x1b[7;9mText\x1b[27;29m\x1b[",
 		},
 	}
 
@@ -253,17 +253,17 @@ func TestNonAnsiDetectionWriter_256Colors(t *testing.T) {
 		{
 			name:     "foreground 256-color",
 			input:    "\x1b[38;5;82mBright Green\x1b[0m\n",
-			expected: "\x1b[38;5;82m\x1b[9mBright Green\x1b[29m\x1b[0m\n",
+			expected: "\x1b[38;5;82m\x1b[7;9mBright Green\x1b[27;29m\x1b[0m\n",
 		},
 		{
 			name:     "background 256-color",
 			input:    "\x1b[48;5;196mRed Background\x1b[0m\n",
-			expected: "\x1b[48;5;196m\x1b[9mRed Background\x1b[29m\x1b[0m\n",
+			expected: "\x1b[48;5;196m\x1b[7;9mRed Background\x1b[27;29m\x1b[0m\n",
 		},
 		{
 			name:     "mixed 256 and 4-bit colors",
 			input:    "\x1b[31mRed\x1b[0m \x1b[38;5;82mBright Green\x1b[0m\n",
-			expected: "\x1b[31mRed\x1b[0m \x1b[38;5;82m\x1b[9mBright Green\x1b[29m\x1b[0m\n",
+			expected: "\x1b[31mRed\x1b[0m \x1b[38;5;82m\x1b[7;9mBright Green\x1b[27;29m\x1b[0m\n",
 		},
 	}
 
