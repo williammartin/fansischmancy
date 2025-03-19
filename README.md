@@ -4,6 +4,15 @@ Checks whether your CLI is outputting accessible color codes (i.e. 4-bit ANSI).
 
 No fansischmancy 256 or truecolours thank you.
 
+## Build and Run
+
+```sh
+make
+<cmd> | ./fansi
+```
+
+Make sure that the command you run outputs colors when piped.
+
 ## `gh issue list --repo cli/cli`
 
 Unable to tell that colors are not using 4-bit:
